@@ -1,10 +1,22 @@
-# Title (replace with your title)
+# Matching an Email
 
-Introductory paragraph (replace this with your text)
+In this tutorial we're going to go over basic concepts of RegEx componets(Regular Expressions) to better understand how to match an email using these systems.
 
 ## Summary
 
-Briefly summarize the regex you will be describing and what you will explain. Include a code snippet of the regex. Replace this text with your summary.
+This regex is a simplified version for basic email validation, and it matches email addresses that follow common patterns but doesn't account for all possible edge cases in email formatting.
+
+```
+/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+```
+
+- **`^`:** Start at the beginning of the line.
+- **`[a-zA-Z0-9._%+-]+`:** Match one or more characters that can be in an email username.
+- **`@`:** Match the "@" symbol.
+- **`[a-zA-Z0-9.-]+`:** Match one or more characters that can be in the domain name.
+- **`\.`:** Match a literal dot (.) character.
+- **`[a-zA-Z]{2,}`:** Match at least two or more letters for the top-level domain (TLD).
+- **`$`:** Match the end of the line.
 
 ## Table of Contents
 
@@ -28,9 +40,9 @@ An anchor in regular expressions is a special character that doesn't match any a
 
 There are two main types of anchors:
 
-Start Anchor (^): This anchor asserts that the pattern following it must appear at the very beginning of the text.
+**Start Anchor (^):** This anchor asserts that the pattern following it must appear at the very beginning of the text.
 
-End Anchor ($): This anchor asserts that the pattern preceding it must appear at the very end of the text.
+**End Anchor ($):** This anchor asserts that the pattern preceding it must appear at the very end of the text.
 
 For example, if you use the pattern `/^Hello/`, it would match the word "Hello" only if it appears at the beginning of the text. Similarly, if you use the pattern `/world$/`, it would match the word "world" only if it appears at the end of the text.
 
@@ -156,12 +168,92 @@ Bracket expressions help you be specific about the characters you want to match.
 
 ### Greedy and Lazy Match
 
+**Greedy Matching:**
+Imagine you're at a buffet with lots of different foods, and you want to get as much food as possible. You keep grabbing items until you can't eat anymore. Greedy matching in regular expressions is a bit like this – it tries to match as much text as it can while still allowing the overall pattern to match.
+
+For instance, let's say you have the text "abcdef" and you use the pattern `/a.*d/`. The `.*` part is a greedy match, so it would try to grab as many characters as possible between "a" and "d." In this case, it would match the whole text "abcdef," even though you might have expected it to stop at "ad."
+
+**Lazy (Non-Greedy) Matching:**
+Now, imagine you're reading a book and you're in a hurry. You just want to get a quick summary of each chapter without reading all the details. Lazy matching in regular expressions is like this – it matches as little text as possible while still making the pattern match.
+
+Using the same text "abcdef" and pattern `/a.*?d/`, the `.*?` part is a lazy match. It would try to grab as few characters as possible while still allowing the pattern to match. In this case, it would match "ad" – the shortest possible sequence that fits the pattern.
+
+In summary:
+
+**Greedy Matching:** Grabs as much text as possible while still making the overall pattern match.
+
+**Lazy (Non-Greedy) Matching:** Grabs as little text as possible while still making the pattern match.
+
+Greedy and lazy matching are important concepts because they influence how your regular expressions behave, especially when there are repeated patterns in the text. Depending on your needs, you can choose the appropriate type of matching to get the desired results in your pattern searches.
+
 ### Boundaries
+
+Boundaries are like invisible lines that help you define where specific patterns or characters should or shouldn't appear within the text you're searching. They act as markers to control exactly where your pattern should start or end its search.
+
+Think of boundaries as the edges of a puzzle piece – they define where that piece fits perfectly with the others. Similarly, in regex, boundaries define where your pattern should fit perfectly within the text.
+
+Here are two common types of boundaries:
+
+**Word Boundary (\b):** The word boundary is like a line that separates words in a text. It's not an actual character; it's a position. Using `\b` in your regex pattern allows you to match patterns that occur at the beginning or end of a word. For example, `\bword\b` would match only the standalone word "word" and not "wording" or "password."
+
+**Line Start and End (`^` and `$`):** The caret `^` and dollar sign `$` are used to represent the start and end of a line in your text. `^` matches the very beginning of a line, and `$` matches the very end of a line. For instance, `^Hello` would match "Hello" only if it appears at the beginning of a line.
+
+Using these boundaries helps you create more precise and controlled searches. They ensure that your pattern only matches in the specific positions you want, making your regular expressions more accurate and effective. Just like puzzle piece edges help you fit the pieces together correctly, regex boundaries help you fit your patterns perfectly within the text.
 
 ### Back-references
 
+Back-references in regular expressions allow you to refer to and reuse parts of your pattern that you've already matched. They're like placeholders that remember what you've found and allow you to use that information later in your regex.
+
+Think of it as taking notes while reading a book. When you find something important, you jot it down on a piece of paper so you can easily refer back to it later.
+
+In regex, you use parentheses `()` to create capturing groups. When you capture something with parentheses, you can later refer to it using backreferences.
+
+For example, let's say you have the pattern `(\w+)\s+\1.` The first capturing group `(\w+)` captures one or more word characters, and then `\s+` matches one or more spaces. The `\1` is a backreference to the first capturing group, meaning it will match whatever was captured by that group earlier.
+
+If you use this pattern on the text "apple apple," it will match the entire phrase because the backreference `\1` ensures that the same word appears twice.
+
+In simple terms:
+
+- **Capturing Group (`()`):** Like taking notes on important information while reading.
+- **Back-reference (`\1`, `\2`, etc.):** Referring back to those notes to use the same information again.
+  Backreferences are useful when you want to find repeated patterns or ensure that certain parts of your text match each other. They save you from writing redundant patterns and help you efficiently work with repeating data.
+
 ### Look-ahead and Look-behind
+
+Look-ahead and look-behind are advanced concepts in regular expressions that allow you to check for specific conditions before or after a particular pattern, without actually including those conditions in the match. They're like sneak peeks that help you decide whether a certain part of your pattern should match.
+
+**Look-ahead (`(?=...)`):**
+Think of look-ahead as a peek into the future. It's like checking what's coming up next before deciding whether to match the current pattern. If you're baking cookies and want to make sure you have enough chocolate chips, you might look ahead in the recipe to see if you need more.
+
+In regex, a positive look-ahead is written as `(?=...)`. For example, `apple(?= pie)` would match "apple" only if it's followed by the word "pie." The look-ahead `(?= pie)` checks if "pie" comes after "apple," without including "pie" in the actual match.
+
+**Negative Look-ahead (`(?!...)`):**
+This is like looking ahead to make sure something doesn't happen. Using the cookie analogy, it's like checking the recipe to make sure there are no onions in your chocolate chip cookies.
+
+In regex, a negative look-ahead is written as `(?!...)`. For instance, `apple(?! pie)` would match "apple" only if it's not followed by the word "pie." The negative look-ahead `(?! pie)` checks if "pie" is not present after "apple."
+
+**Look-behind (`(?<=...)`):**
+Look-behind is similar, but it checks what's behind the current position in the text. It's like checking the ingredients you've already used before deciding what to add next.
+
+In regex, a positive look-behind is written as `(?<=...)`. For example, `(?<=good )morning` would match "morning" only if it's preceded by the words "good." The look-behind `(?<=good )` checks if "good" comes before "morning."
+
+**Negative Look-behind (`(?<!...)`):**
+This is like checking that something isn't behind you before you take a step. In regex, a negative look-behind is written as `(?<!...)`.
+
+In simple terms:
+
+**Look-ahead (`(?=...)`):** Checking what comes after the pattern.
+
+**Negative Look-ahead (`(?!...)`):** Checking that something doesn't come after the pattern.
+
+**Look-behind (`(?<=...)`):** Checking what comes before the pattern.
+
+**Negative Look-behind (`(?<!...)`):** Checking that something doesn't come before the pattern.
+
+Look-ahead and look-behind are powerful tools that help you add complex conditions to your patterns without including those conditions in the actual match.
 
 ## Author
 
-A short section about the author with a link to the author's GitHub profile (replace with your information and a link to your profile)
+Brendan Aper, brings craftsmanship from the world of contracting into the realm of technology. Juggling hammers and lines of code, he's on a dual journey of creating physical structures and digital solutions. Currently residing in the charming city of Bend, Oregon, Brendan draws inspiration from the natural beauty that graces his surroundings. As he embarks on his path of learning computer programming and web development through the edX School's Bootcamp, Brendan bridges the gap between the tangible and the virtual, creating a dynamic fusion of skills.
+
+Follow on [GitHub](https://github.com/brendan-aper)
